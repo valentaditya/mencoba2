@@ -30,7 +30,7 @@ Repository menggunakan empat jenis branch utama:
 | `main` | Menyimpan versi sistem yang stabil dan siap digunakan/release. | Protected |
 | `staging` | Menyimpan versi yang digunakan untuk final testing sebelum release. | Protected |
 | `development` | Branch utama untuk integrasi hasil pengembangan fitur. | Protected |
-| `feature/*` | Branch untuk mengembangkan fitur atau perubahan tertentu. | Not Protected |
+| `[grup]-[nomor]-[fitur]` | Branch per fitur yang dibuat oleh masing-masing skuat. Format: `[grup]-[nomor_alur]-[nama_fitur]`, contoh: `D4-001-login`. | Not Protected |
 
 ---
 
@@ -61,27 +61,34 @@ Branch `staging` digunakan untuk melakukan pengujian terhadap versi sistem sebel
 Branch `development` digunakan sebagai branch integrasi seluruh fitur yang telah dikembangkan oleh anggota tim.
 
 **Ketentuan:**
-- Setiap fitur dikembangkan melalui branch `feature/*`
+- Setiap fitur dikembangkan melalui branch dengan format `[grup]-[nomor_alur]-[nama_fitur]`
 - Perubahan dari feature branch masuk melalui **Pull Request**
 - Perubahan pada branch harus melalui proses review
 - Branch digunakan untuk memastikan fitur-fitur dapat berjalan bersama sebelum dipindahkan ke `staging`
 
-### d. `feature/*`
+### d. `[grup]-[nomor_alur]-[nama_fitur]`
 
-Feature branch digunakan untuk mengembangkan fitur, perbaikan, atau perubahan tertentu pada sistem.
+Setiap fitur dikerjakan di branch tersendiri. Branch ini dibuat oleh masing-masing skuat setiap kali ada fitur baru yang akan dikembangkan — **satu fitur, satu branch baru**.
 
 **Format penamaan:**
 ```
-feature/<nama-fitur>
+[grup]-[nomor_alur]-[nama_fitur]
 ```
-**Contoh:** `feature/login`
 
-Feature branch dibuat berdasarkan branch `development` yang sudah di-set sebagai default oleh repo owner.
+| Bagian | Keterangan | Contoh |
+|---|---|---|
+| `grup` | Kode skuat/kelompok | `D4` |
+| `nomor_alur` | Nomor urut fitur (3 digit) | `001`, `002` |
+| `nama_fitur` | Nama fitur singkat tanpa spasi | `login`, `register` |
+
+**Contoh:** `D4-001-login`, `D4-002-register`, `B2-001-dashboard`
+
+Branch dibuat dari `development` yang sudah di-set sebagai default oleh repo owner. Sebelum membuat branch baru, skuat **wajib melakukan pull terlebih dahulu** untuk memastikan branch dimulai dari versi `development` terbaru.
 
 **Alur Branch secara keseluruhan:**
 
 ```
-feature/*
+[grup]-[nomor_alur]-[nama_fitur]   (misal: D4-001-login)
     |
     |  Pull Request
     ▼
@@ -102,33 +109,38 @@ main
 
 Workflow selama development (per 14 September 2026):
 
-### 1. Update `development`
+### 1. Pull `development` Terbaru
 
-Sebelum memulai, WebDev disarankan untuk melakukan update branch `development` agar branch baru dibuat berdasarkan versi terbaru:
+Sebelum membuat branch baru, **wajib** pull `development` terlebih dahulu agar branch dibuat dari versi terbaru:
 
 ```bash
 git checkout development
 git pull origin development
 ```
 
-### 2. Membuat Feature Branch
+### 2. Membuat Branch Fitur Baru
 
-Buat branch baru dari `development`:
+Setiap fitur baru **selalu** dibuatkan branch baru dengan format `[grup]-[nomor_alur]-[nama_fitur]`:
 
 ```bash
-git checkout -b feature/<nama-fitur>
+git checkout -b [grup]-[nomor_alur]-[nama_fitur]
 ```
 
-**Contoh:** `git checkout -b feature/login`
+**Contoh:**
+```bash
+git checkout -b D4-001-login
+```
+
+> Jangan mengerjakan fitur berbeda di branch yang sama. Satu fitur = satu branch baru.
 
 ### 3. Melakukan Pengembangan
 
-WebDev melakukan pengembangan pada feature branch. Selama proses pengembangan, perubahan disimpan melalui commit & push:
+WebDev melakukan pengembangan pada branch fitur. Setiap perubahan disimpan melalui commit & push:
 
 ```bash
 git add .
 git commit -m "feat: add login form"
-git push -u origin feature/login
+git push -u origin D4-001-login
 ```
 
 ### 4. Pull Request ke `development`
@@ -136,7 +148,7 @@ git push -u origin feature/login
 Setelah fitur selesai dan sudah diuji, WebDev membuat Pull Request yang akan di-review oleh anggota yang telah ditentukan.
 
 ```
-feature/*  ──── Pull Request ────►  development
+D4-001-login  ──── Pull Request ────►  development
 ```
 
 > Pull Request harus melalui proses **code review** sebelum dapat di-merge.
@@ -150,7 +162,7 @@ Setelah Pull Request direview dan disetujui, perubahan dapat di-merge ke `develo
 ```bash
 git add .
 git commit -m "feat: add login functionality"
-git push -u origin feature/login
+git push -u origin D4-001-login
 ```
 
 Setelah fitur-fitur yang diperlukan terintegrasi dan siap diuji, buat Pull Request ke `staging`:
